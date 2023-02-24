@@ -71,6 +71,7 @@ class BaseConversation extends Conversation{
     public function askFirstname()
     {
         $this->ask('Hello! What is your firstname?', function(Answer $answer) {
+            // amma bu hissəyə çatmırıq, məndən aldığı cavabı qaytarmır
             // Save result
             $this->firstname = $answer->getText();
 
@@ -92,7 +93,6 @@ class BaseConversation extends Conversation{
     public function run()
     {
         // This will be called immediately
-        $this->askFirstname();
-        $this->askEmail();
+        $this->askFirstname(); // bu hissə işliyir, adımı soruşur ...
     }
 }
