@@ -12,35 +12,41 @@ use Illuminate\Support\Facades\Session;
 
 class BaseConversation extends Conversation{
 
-    protected $firstname;
-
-    protected $email;
-
-    public function askFirstname()
+    public $botMessages;
+    public $question;
+//
+    public function __construct()
     {
-        $this->ask('Hello! What is your firstname?', function(Answer $answer) {
-            // amma bu hissəyə çatmırıq, məndən aldığı cavabı qaytarmır
-            // Save result
-            $this->firstname = $answer->getText();
-
-            $this->say('Nice to meet you '.$this->firstname);
-            $this->askEmail();
-        });
+        $this->botMessages = new BotMessages();
+        $this->question = $this->botMessages->where('type', 1)->where('value', 'first_question')->first();
     }
 
-    public function askEmail()
+    public function question($row)
     {
-        $this->ask('One more thing - what is your email?', function(Answer $answer) {
-            // Save result
-            $this->email = $answer->getText();
+        foreach ($row->buttons as $button) {
+            $buttons[] = Button::create($button['name'])->value($button['id']);
+        }
 
-            $this->say('Great - that is all we need, '.$this->firstname);
+        $question = Question::create($row->text)->addButtons($buttons);
+
+        $that = $this;
+        $this->question = false;
+        $this->ask($question, function (Answer $answer) use ($that){
+            $nextAnswer = $that->botMessages->where('value', $answer)->where('deleted_at', null)->first();
+            if($nextAnswer['type'] == 1){
+//                Session::put('nextAnswer', $nextAnswer);
+                $that->question = $nextAnswer;
+//                dd($nextAnswer);
+//                $that->question($nextAnswer);
+            }elseif($nextAnswer['type'] == 2){
+                $this->say($nextAnswer->text);
+            }
         });
     }
 
     public function run()
     {
         // This will be called immediately
-        $this->askFirstname(); // bu hissə işliyir, adımı soruşur ...
+        $this->question($this->question);
     }
 }
