@@ -43,8 +43,6 @@ class BotManController extends Controller
         $this->service = new BotmanMethods();
     }
 
-
-
     /**
      * Place your BotMan logic here.
      */
@@ -52,25 +50,13 @@ class BotManController extends Controller
     public function handle()
     {
         $that = $this;
-        $this->bot->startConversation(new BaseConversation());
-//        $this->service->hears();
+//        $this->bot->startConversation(new BaseConversation());
 
-//        $this->firstQuestions();
-
-//        $this->bot->hears('{message}', function($botman, $message) use ($that){
-//            /*if(strpos($message)){
-//
-//            }*/
-//
-//            if ($message == 'hi') {
-//                $that->bot->reply('hello');
-//            }else{
-////                $this->welcomeMessage();
-//                $this->firstQuestions();
-//            }
-//        });
+        $this->bot->hears('{message}', function ($bot){
+            $bot->startConversation(new BaseConversation());
+        });
+        
         $this->bot->listen();
-
     }
 
     /**
@@ -86,7 +72,7 @@ class BotManController extends Controller
 
     public function welcomeMessage()
     {
-        $this->bot->reply("Salam Portal Games Botu xidmətinizdədir. Sizi maraqlandıran suallarınıza ən qısa zamanda cavab tapacaqsınız.");
+        $this->bot->reply("Salam *** Botu xidmətinizdədir. Sizi maraqlandıran suallarınıza ən qısa zamanda cavab tapacaqsınız.");
     }
 
     public function fallback(){
